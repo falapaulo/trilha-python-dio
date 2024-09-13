@@ -1,0 +1,62 @@
+class ContaBancaria:
+    def __init__(self):
+        self.saldo = 0
+        self.depositos = []
+        self.saques = []
+
+    def deposito(self, saldo, valor, extrato):
+        if valor > 0:
+            saldo += valor
+            self.depositos.append(valor)
+            extrato.append(f'Depósito: R$ {valor:.2f}')
+            print(f'Depósito de R$ {valor:.2f} realizado com sucesso.')
+        else:
+            print('Valor de depósito inválido.')
+        return saldo, extrato
+
+    def saque(self, *, saldo, valor, extrato, limite=500, numero_saques=3, limite_saques=3):
+        if len(self.saques) < numero_saques and valor <= limite and valor <= saldo:
+            saldo -= valor
+            self.saques.append(valor)
+            extrato.append(f'Saque: R$ {valor:.2f}')
+            print(f'Saque de R$ {valor:.2f} realizado com sucesso.')
+        elif valor > limite:
+            print(f'Limite de saque por operação é de R$ {limite}.')
+        elif valor > saldo:
+            print('Saldo insuficiente para realizar o saque.')
+        else:
+            print(f'Limite de saques diários excedido ({limite_saques}).')
+        return saldo, extrato
+
+    def extrato(self, saldo, *, extrato):
+        print('Extrato:')
+        if not self.depositos and not self.saques:
+            print('Não foram realizadas movimentações.')
+        else:
+            for movimentacao in extrato:
+                print(movimentacao)
+        print(f'Saldo atual: R$ {saldo:.2f}')
+
+class Banco:
+    def __init__(self):
+        self.usuarios = []
+        self.contas = []
+        self.numero_conta = 0
+
+    def criar_usuario(self, nome, data_nascimento, cpf, endereco):
+        cpf = cpf.replace(".", "").replace("-", "")
+        if not any(usuario['cpf'] == cpf for usuario in self.usuarios):
+            self.usuarios.append({'nome': nome, 'data_nascimento': data_nascimento, 'cpf': cpf, 'endereco': endereco})
+            print('Usuário criado com sucesso.')
+        else:
+            print('Já existe um usuário com esse CPF.')
+
+    def criar_conta_corrente(self, usuario):
+        self.numero_conta += 1
+        self.contas.append({'agencia': '0001', 'numero_conta': self.numero_conta, 'usuario': usuario})
+        print('Conta corrente criada com sucesso.')
+
+# Uso do código
+banco = Banco()
+banco.criar_usuario('João', '01/01/1990', '123.456.789-00', 'Rua A, 100, Centro, Cidade, UF')
+banco.criar_conta_corrente('123.456.789-00')
